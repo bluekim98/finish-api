@@ -5,7 +5,7 @@ import { User } from '@src/user/entity/user.entity';
 import { UserDto } from '../dto/user.dto';
 import { FindUserDto } from '../dto/find-user.dto';
 import { BcryptService } from '@src/utils/service/bcrypt.service';
-import { UserRepository } from '../\brepository/user.repository';
+import { UserRepository } from '../repository/user.repository';
 
 @Injectable()
 export class UserService {
