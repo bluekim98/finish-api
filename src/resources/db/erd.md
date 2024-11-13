@@ -1,4 +1,4 @@
-# 데이터베이스 ERD (Entity-Relationship Diagram)
+# 피니시골프 ERD
 
 ## 테이블 구조
 
