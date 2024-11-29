@@ -13,6 +13,11 @@ export class UserController {
         return await this.userService.create(createUserDto);
     }
 
+    @Post('kakao')
+    async createKakaoUser(@Body() createUserDto: CreateUserDto) {
+        return await this.userService.create(createUserDto);
+    }
+
     @UseJwtAuthGuard()
     @Get('me')
     async me(@Req() req: RequestWithUser) {

@@ -6,6 +6,11 @@ export class CreateUserDto {
 
     @IsString()
     readonly phoneNumber: string;
+    @IsString()
+    readonly kakaoId: number;
+
+    @IsString()
+    readonly provider: string;
 
     @IsString()
     @MinLength(8)

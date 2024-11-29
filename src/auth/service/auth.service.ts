@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UserService } from '@src/user/service/user.service';
+import { UserService } from '@src/modules/user/service/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { BcryptService } from '@src/utils/service/bcrypt.service';
-import { User } from '@src/user/entity/user.entity';
+import { BcryptService } from '@src/common/utils/service/bcrypt.service';
+import { User } from '@src/modules/user/entity/user.entity';
+import { UserDto } from '@src/modules/user/dto/user.dto';
 
 export enum TokenType {
     JWT_ACCESS_TOKEN = 'Authentication',
@@ -34,26 +35,26 @@ export class AuthService {
         return isCompare ? user : undefined;
     }
 
-    generateTokenCookies(user: User): string[] {
+    generateTokenCookies(user: UserDto): string[] {
         const accessTokenCookie = this.generateJwtAccessTokenCookie(user);
         const refreshTokenCookie = this.generateJwtRefreshTokenCookie(user);
 
         return [accessTokenCookie, refreshTokenCookie];
     }
 
-    generateJwtAccessTokenCookie(user: User): string {
+    generateJwtAccessTokenCookie(user: UserDto): string {
         const token = this.generateJwtAccessToken(user);
         return this.getCookieByToken(TokenType.JWT_ACCESS_TOKEN, token);
     }
 
-    generateJwtRefreshTokenCookie(user: User): string {
+    generateJwtRefreshTokenCookie(user: UserDto): string {
         return this.getCookieByToken(
             TokenType.JWT_REFRESH_TOKEN,
             this.generateRefreshToken(user),
         );
     }
 
-    generateJwtAccessToken(user: User): string {
+    generateJwtAccessToken(user: UserDto): string {
         const payload = { sub: user.id, username: user.phoneNumber };
         const token = this.jwtService.sign(payload, {
             secret: this.configService.get('JWT_ACCESS_SECRET'),
@@ -62,7 +63,7 @@ export class AuthService {
         return token;
     }
 
-    generateRefreshToken(user: User): string {
+    generateRefreshToken(user: UserDto): string {
         const payload = { sub: user.id, username: user.phoneNumber };
 
         const token = this.jwtService.sign(payload, {
@@ -85,5 +86,23 @@ export class AuthService {
         const maxAge = this.configService.get<number>(expiresConfigTitle);
 
         return `${type}=${token}; HttpOnly; Path=/; Max-Age=${maxAge}`;
+    }
+
+    async getJWT(user: any) {
+        const kakaoUser = await this.kakaoValidateUser(user); // 카카오 정보 검증 및 회원가입 로직
+        const accessToken = this.generateJwtAccessToken(kakaoUser); // AccessToken 생성
+        const refreshToken = await this.generateRefreshToken(kakaoUser); // refreshToken 생성
+        return { accessToken, refreshToken };
+    }
+
+    async kakaoValidateUser(user: User): Promise<UserDto> {
+        let kakaoUser: UserDto = await this.userService.findOneByKakaoId(
+            user.kakaoId,
+        ); // 유저 조회
+        if (!kakaoUser) {
+            // 회원 가입 로직
+            kakaoUser = await this.userService.create({ ...user });
+        }
+        return kakaoUser;
     }
 }
