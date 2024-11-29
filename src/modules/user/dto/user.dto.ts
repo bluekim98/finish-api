@@ -4,4 +4,5 @@ export class UserDto {
     readonly phoneNumber: string;
     readonly createdAt: Date;
     readonly updatedAt: Date;
+    readonly kakaoId: number;
 }

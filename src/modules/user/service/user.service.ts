@@ -23,6 +23,8 @@ export class UserService {
             name: createUserDto.name,
             phoneNumber: createUserDto.phoneNumber,
             password: encryptedPassword,
+            kakaoId: createUserDto.kakaoId,
+            provider: createUserDto.provider,
         };
 
         return await this.userRepository
@@ -37,6 +39,11 @@ export class UserService {
     async findOneByPhoneNumber(phoneNumber: string) {
         return await this.userRepository
             .findOneByPhoneNumberOrFail(phoneNumber)
+            .then((user) => this.toDto(user));
+    }
+    async findOneByKakaoId(kakaoId: number) {
+        return await this.userRepository
+            .findOneByKakaoIdOrFail(kakaoId)
             .then((user) => this.toDto(user));
     }
 
@@ -55,6 +62,7 @@ export class UserService {
             phoneNumber: user.phoneNumber,
             createdAt: user.createdAt!,
             updatedAt: user.updatedAt!,
+            kakaoId: user.kakaoId,
         };
     }
 }

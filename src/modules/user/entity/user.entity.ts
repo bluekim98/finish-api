@@ -1,4 +1,4 @@
-import { parseNumber } from '@src/utils/transformer';
+import { parseNumber } from '@src/common/utils/transformer';
 import {
     Column,
     Entity,
@@ -18,18 +18,18 @@ export class User {
     })
     readonly id?: number;
 
-    @Column({ name: 'name', type: 'varchar', nullable: false })
+    @Column({ name: 'name', type: 'varchar', nullable: true })
     readonly name: string;
 
     @Column({
         name: 'phone_number',
         type: 'varchar',
-        nullable: false,
+        nullable: true,
         unique: true,
     })
     readonly phoneNumber: string;
 
-    @Column({ name: 'password', type: 'varchar', nullable: false })
+    @Column({ name: 'password', type: 'varchar', nullable: true })
     readonly password: string;
 
     @CreateDateColumn({
@@ -46,5 +46,10 @@ export class User {
         onUpdate: 'CURRENT_TIMESTAMP(6)',
         name: 'update_at',
     })
+    @Column({ name: 'kakaoId', type: 'bigint', nullable: true })
+    readonly kakaoId: number;
+    @Column({ name: 'provider', type: 'varchar', nullable: true })
+    readonly provider: string;
+
     readonly updatedAt?: Date;
 }
