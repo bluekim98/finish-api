@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UserService } from '../service/user.service';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UseJwtAuthGuard } from '@src/auth/guard';
+import { UseKakaoAuthGuard } from '@src/auth/guard';
 import { RequestWithUser } from '@src/auth/controller/auth.controller';
 
 @Controller('user')
@@ -13,14 +13,16 @@ export class UserController {
         return await this.userService.create(createUserDto);
     }
 
-    @Post('kakao')
-    async createKakaoUser(@Body() createUserDto: CreateUserDto) {
-        return await this.userService.create(createUserDto);
+    @UseKakaoAuthGuard()
+    @Get('kakao')
+    async kakao(@Req() req: RequestWithUser) {
+        return req.user;
     }
 
-    @UseJwtAuthGuard()
     @Get('me')
     async me(@Req() req: RequestWithUser) {
+        console.log('=========== me ============');
+        console.log(req.user);
         return req.user;
     }
 }

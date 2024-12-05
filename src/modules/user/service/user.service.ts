@@ -15,12 +15,13 @@ export class UserService {
     ) {}
 
     async create(createUserDto: CreateUserDto) {
-        const encryptedPassword = await this.bcryptService.hash(
-            createUserDto.password,
-        );
+        const encryptedPassword = createUserDto.password
+            ? await this.bcryptService.hash(createUserDto.password)
+            : '';
 
         const user: User = {
             name: createUserDto.name,
+            email: createUserDto.email,
             phoneNumber: createUserDto.phoneNumber,
             password: encryptedPassword,
             kakaoId: createUserDto.kakaoId,
@@ -59,6 +60,7 @@ export class UserService {
         return {
             id: user.id!,
             name: user.name,
+            email: user.email,
             phoneNumber: user.phoneNumber,
             createdAt: user.createdAt!,
             updatedAt: user.updatedAt!,
