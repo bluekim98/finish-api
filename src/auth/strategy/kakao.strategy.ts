@@ -16,7 +16,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
     ) {
         super({
             // 여기 적어준 정보를 가지고 카카오 서버에 POST /oauth/token 요청이 날아감
-            clientId: configService.get('KAKAO_CLIENT_ID'),
+            clientID: configService.get('KAKAO_CLIENT_ID'),
             clientSecret: '',
             callbackURL: configService.get('KAKAO_CALLBACK_URL'),
         });
@@ -30,16 +30,18 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
         done: (error: any, user?: User, info?: any) => void,
     ) {
         try {
-            const { _json } = profile; //{ id: 0123456789, connected_at: '2023-08-25T10:15:22Z' }
+            const { _json, provider, username } = profile; //{ id: 0123456789, connected_at: '2023-08-25T10:15:22Z' }
             const user: User = {
                 kakaoId: _json.id,
-                phoneNumber: _json.phone_number,
-                name: _json.name,
+                phoneNumber: _json.kakao_account.profile.phone_number || '',
+                name: username || '',
                 password: '',
-                provider: 'kakao',
+                provider,
+                email: _json.kakao_account.eamil,
             };
             done(null, user);
         } catch (error) {
+            console.log(error);
             done(error);
         }
     }

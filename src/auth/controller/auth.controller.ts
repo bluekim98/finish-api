@@ -29,20 +29,16 @@ export class AuthController {
     }
 
     @UseKakaoAuthGuard()
-    @Get('kakao-sign-in')
-    async kakaoSignIn(@Req() req: RequestWithUser) {
-        const tokenCookies = this.authService.generateTokenCookies(req.user);
-        req.res!.setHeader('Set-Cookie', [...tokenCookies]);
-        return req.user;
-    }
-
-    @UseKakaoAuthGuard()
-    @Get('kakao-login')
-    @HttpCode(301)
+    @Get('kakao')
     async kakaoLogin(@Req() req: RequestWithUser, @Res() res: Response) {
+        console.log('==================kakaoLogin=====================');
         const { accessToken, refreshToken } = await this.authService.getJWT(
             req.user,
         );
+        console.log('==================token=====================');
+        console.log(accessToken);
+        console.log(refreshToken);
+        console.log('==================token=====================');
         res.cookie('accessToken', accessToken, { httpOnly: true });
         res.cookie('refreshToken', refreshToken, { httpOnly: true });
         res.cookie('isLoggedIn', true, { httpOnly: false });

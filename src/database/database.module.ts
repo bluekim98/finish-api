@@ -16,11 +16,11 @@ import { Global, Module } from '@nestjs/common';
                         port: configService.get<number>('MYSQL_PORT'),
                         username: configService.get('MYSQL_USER'),
                         password: configService.get('MYSQL_PASSWORD'),
-                        database: 'finish',
-                        entities: [`${__dirname}/../**/**.entity{.ts,.js}`],
+                        database: configService.get('DATABASE'),
+                        entities: [`${__dirname}/../**/**/**.entity{.ts,.js}`],
                         maxQueryExecutionTime: 500,
                         connectTimeout: 100,
-                        logging: ['error'],
+                        logging: true,
                         synchronize: true, // dev 전용
                     });
                     await dataSource.initialize(); // initialize the data source

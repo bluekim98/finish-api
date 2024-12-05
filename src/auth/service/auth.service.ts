@@ -5,6 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { BcryptService } from '@src/common/utils/service/bcrypt.service';
 import { User } from '@src/modules/user/entity/user.entity';
 import { UserDto } from '@src/modules/user/dto/user.dto';
+import { ExceptionCode } from '@src/common/enums/exception-code.enum';
 
 export enum TokenType {
     JWT_ACCESS_TOKEN = 'Authentication',
@@ -55,7 +56,11 @@ export class AuthService {
     }
 
     generateJwtAccessToken(user: UserDto): string {
-        const payload = { sub: user.id, username: user.phoneNumber };
+        console.log('============= generateJwtAccessToken=============');
+        const payload = { sub: user.id, username: user.name };
+        console.log(payload);
+        console.log(this.configService.get('JWT_ACCESS_SECRET'));
+        console.log(Number(process.env.JWT_ACCESS_EXPIRES));
         const token = this.jwtService.sign(payload, {
             secret: this.configService.get('JWT_ACCESS_SECRET'),
             expiresIn: Number(process.env.JWT_ACCESS_EXPIRES),
@@ -64,8 +69,9 @@ export class AuthService {
     }
 
     generateRefreshToken(user: UserDto): string {
-        const payload = { sub: user.id, username: user.phoneNumber };
-
+        const payload = { sub: user.id, username: user.name };
+        console.log(this.configService.get('JWT_REFRESH_SECRET'));
+        console.log(Number(process.env.JWT_REFRESH_EXPIRES));
         const token = this.jwtService.sign(payload, {
             secret: this.configService.get('JWT_REFRESH_SECRET'),
             expiresIn: Number(process.env.JWT_REFRESH_EXPIRES),
@@ -89,20 +95,25 @@ export class AuthService {
     }
 
     async getJWT(user: any) {
+        console.log('====================== getJWT =======================');
         const kakaoUser = await this.kakaoValidateUser(user); // 카카오 정보 검증 및 회원가입 로직
+        console.log('====================== kakaoUser =======================');
+        console.log(kakaoUser);
         const accessToken = this.generateJwtAccessToken(kakaoUser); // AccessToken 생성
         const refreshToken = await this.generateRefreshToken(kakaoUser); // refreshToken 생성
         return { accessToken, refreshToken };
     }
 
     async kakaoValidateUser(user: User): Promise<UserDto> {
-        let kakaoUser: UserDto = await this.userService.findOneByKakaoId(
-            user.kakaoId,
-        ); // 유저 조회
-        if (!kakaoUser) {
-            // 회원 가입 로직
-            kakaoUser = await this.userService.create({ ...user });
+        console.log('================ kakaoValidateUser==============');
+        console.log(user);
+        try {
+            return await this.userService.findOneByKakaoId(user.kakaoId);
+        } catch (error) {
+            if (error.code === ExceptionCode.USER_NOT_FOUND) {
+                return await this.userService.create({ ...user });
+            }
+            throw error;
         }
-        return kakaoUser;
     }
 }
