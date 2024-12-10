@@ -14,7 +14,7 @@ export class UserService {
         private readonly bcryptService: BcryptService,
     ) {}
 
-    async create(createUserDto: CreateUserDto) {
+    async create(createUserDto: CreateUserDto, device: string) {
         const encryptedPassword = createUserDto.password
             ? await this.bcryptService.hash(createUserDto.password)
             : '';
@@ -22,6 +22,7 @@ export class UserService {
         const user: User = {
             name: createUserDto.name,
             email: createUserDto.email,
+            device: device,
             phoneNumber: createUserDto.phoneNumber,
             password: encryptedPassword,
             kakaoId: createUserDto.kakaoId,
@@ -40,6 +41,12 @@ export class UserService {
     async findOneByPhoneNumber(phoneNumber: string) {
         return await this.userRepository
             .findOneByPhoneNumberOrFail(phoneNumber)
+            .then((user) => this.toDto(user));
+    }
+
+    async findOneByEmail(email: string) {
+        return await this.userRepository
+            .findOneByEmailOrFail(email)
             .then((user) => this.toDto(user));
     }
     async findOneByKakaoId(kakaoId: number) {
@@ -61,6 +68,7 @@ export class UserService {
             id: user.id!,
             name: user.name,
             email: user.email,
+            device: user.device,
             phoneNumber: user.phoneNumber,
             createdAt: user.createdAt!,
             updatedAt: user.updatedAt!,

@@ -31,6 +31,9 @@ export class User {
     @Column({ name: 'password', type: 'varchar', nullable: true })
     readonly password: string;
 
+    @Column({ name: 'device', type: 'varchar', nullable: true })
+    readonly device: string;
+
     @CreateDateColumn({
         type: 'datetime',
         default: () => 'CURRENT_TIMESTAMP(6)',
