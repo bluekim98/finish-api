@@ -18,10 +18,17 @@ export class UserRepository extends Repository<User> {
         return user;
     }
 
+    async findOneByEmailOrFail(email: string): Promise<User> {
+        const user = await this.findOneBy({ email });
+        if (!user)
+            throw {
+                code: ExceptionCode.USER_NOT_FOUND,
+            };
+        return user;
+    }
+
     async findOneByKakaoIdOrFail(kakaoId: number): Promise<User> {
         const user = await this.findOneBy({ kakaoId });
-        console.log('============ findOneByKakaoIdOrFail=============');
-        console.log(user);
         if (!user)
             throw {
                 code: ExceptionCode.USER_NOT_FOUND,

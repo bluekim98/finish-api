@@ -6,6 +6,7 @@ import { BcryptService } from '@src/common/utils/service/bcrypt.service';
 import { User } from '@src/modules/user/entity/user.entity';
 import { UserDto } from '@src/modules/user/dto/user.dto';
 import { ExceptionCode } from '@src/common/enums/exception-code.enum';
+import { RequestWithUser } from '@src/auth/controller/auth.controller';
 
 export enum TokenType {
     JWT_ACCESS_TOKEN = 'Authentication',
@@ -56,11 +57,7 @@ export class AuthService {
     }
 
     generateJwtAccessToken(user: UserDto): string {
-        console.log('============= generateJwtAccessToken=============');
         const payload = { sub: user.id, username: user.name };
-        console.log(payload);
-        console.log(this.configService.get('JWT_ACCESS_SECRET'));
-        console.log(Number(process.env.JWT_ACCESS_EXPIRES));
         const token = this.jwtService.sign(payload, {
             secret: this.configService.get('JWT_ACCESS_SECRET'),
             expiresIn: Number(process.env.JWT_ACCESS_EXPIRES),
@@ -94,24 +91,27 @@ export class AuthService {
         return `${type}=${token}; HttpOnly; Path=/; Max-Age=${maxAge}`;
     }
 
-    async getJWT(user: any) {
-        console.log('====================== getJWT =======================');
-        const kakaoUser = await this.kakaoValidateUser(user); // 카카오 정보 검증 및 회원가입 로직
-        console.log('====================== kakaoUser =======================');
-        console.log(kakaoUser);
+    async getJWT(req: RequestWithUser) {
+        const user: UserDto = req.user;
+        const device: string = req.header('user-agent') || '';
+        const kakaoUser = await this.kakaoValidateUser(user, device); // 카카오 정보 검증 및 회원가입 로직
         const accessToken = this.generateJwtAccessToken(kakaoUser); // AccessToken 생성
         const refreshToken = await this.generateRefreshToken(kakaoUser); // refreshToken 생성
         return { accessToken, refreshToken };
     }
 
-    async kakaoValidateUser(user: User): Promise<UserDto> {
-        console.log('================ kakaoValidateUser==============');
-        console.log(user);
+    async kakaoValidateUser(user: UserDto, device: string): Promise<UserDto> {
         try {
-            return await this.userService.findOneByKakaoId(user.kakaoId);
+            return await this.userService.findOneByEmail(user.email);
         } catch (error) {
             if (error.code === ExceptionCode.USER_NOT_FOUND) {
-                return await this.userService.create({ ...user });
+                return await this.userService.create(
+                    {
+                        ...user,
+                        password: '',
+                    },
+                    device,
+                );
             }
             throw error;
         }

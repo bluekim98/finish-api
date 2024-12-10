@@ -4,7 +4,6 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthService } from '../service/auth.service';
 import { UserService } from '@src/modules/user/service/user.service';
 import { ConfigService } from '@nestjs/config';
-import { User } from '@src/modules/user/entity/user.entity';
 import { UserDto } from '@src/modules/user/dto/user.dto';
 
 @Injectable()
@@ -27,21 +26,23 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
         accessToken: string,
         refreshToken: string,
         profile: Profile,
-        done: (error: any, user?: User, info?: any) => void,
+        done: (error: any, user?: UserDto, info?: any) => void,
     ) {
         try {
             const { _json, provider, username } = profile; //{ id: 0123456789, connected_at: '2023-08-25T10:15:22Z' }
-            const user: User = {
+            const user: UserDto = {
                 kakaoId: _json.id,
                 phoneNumber: _json.kakao_account.profile.phone_number || '',
                 name: username || '',
-                password: '',
                 provider,
-                email: _json.kakao_account.eamil,
+                email: _json.kakao_account.email,
+                device: '',
+                id: 0,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             };
             done(null, user);
         } catch (error) {
-            console.log(error);
             done(error);
         }
     }
