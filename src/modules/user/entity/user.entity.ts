@@ -21,6 +21,9 @@ export class User {
     @Column({ name: 'email', type: 'varchar', nullable: true })
     readonly email: string;
 
+    @Column({ name: 'level', type: 'varchar', nullable: true })
+    readonly level: string;
+
     @Column({
         name: 'phone_number',
         type: 'varchar',
@@ -40,7 +43,7 @@ export class User {
         name: 'registed_at',
     })
     // set now
-    readonly registedAt?: Date;
+    readonly registeredAt?: Date;
 
     @CreateDateColumn({
         type: 'datetime',

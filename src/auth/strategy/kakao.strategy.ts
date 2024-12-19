@@ -34,10 +34,12 @@ export class KakaoStrategy extends PassportStrategy(Strategy, 'kakao') {
                 kakaoId: _json.id,
                 phoneNumber: _json.kakao_account.profile.phone_number || '',
                 name: username || '',
+                level: '',
                 provider,
                 email: _json.kakao_account.email,
                 device: '',
                 id: 0,
+                registeredAt: new Date(),
                 createdAt: new Date(),
                 updatedAt: new Date(),
             };

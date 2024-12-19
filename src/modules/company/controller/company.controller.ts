@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { CompanyService } from '../service/company.service';
 import { CreateCompanyDto } from '../dto/create-company.dto';
-import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { Company } from '../entity/company.entity';
 
 @Controller('companies')
@@ -29,7 +28,7 @@ export class CompanyController {
     @Patch(':id')
     update(
         @Param('id') id: number,
-        @Body() updateCompanyDto: UpdateCompanyDto,
+        @Body() updateCompanyDto: CreateCompanyDto,
     ) {
         return this.companyService.update(id, updateCompanyDto);
     }

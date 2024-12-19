@@ -4,6 +4,8 @@ export class CreateUserDto {
     @IsString()
     readonly name: string;
     @IsString()
+    readonly level: string;
+    @IsString()
     readonly email: string;
     @IsString()
     readonly phoneNumber: string;
