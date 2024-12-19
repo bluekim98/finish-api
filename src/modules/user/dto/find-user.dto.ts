@@ -6,4 +6,5 @@ export class FindUserDto {
     kakaoId?: number;
     phoneNumber?: string;
     password?: string;
+    registedAt?: Date;
 }

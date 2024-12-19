@@ -37,6 +37,14 @@ export class User {
     @CreateDateColumn({
         type: 'datetime',
         default: () => 'CURRENT_TIMESTAMP(6)',
+        name: 'registed_at',
+    })
+    // set now
+    readonly registedAt?: Date;
+
+    @CreateDateColumn({
+        type: 'datetime',
+        default: () => 'CURRENT_TIMESTAMP(6)',
         name: 'create_at',
     })
     // set now
