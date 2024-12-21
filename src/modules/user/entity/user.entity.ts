@@ -1,11 +1,13 @@
-import { parseNumber } from '@src/common/utils/transformer';
 import {
     Column,
     Entity,
     CreateDateColumn,
     UpdateDateColumn,
     PrimaryGeneratedColumn,
+    ManyToOne,
+    OneToMany,
 } from 'typeorm';
+import { Branch } from '../../branch/entity/branch.entity';
 
 @Entity({ name: 'user' })
 export class User {
@@ -15,11 +17,22 @@ export class User {
     })
     readonly id?: number;
 
+    // 회원과 지점의 관계(N-1)
+    @ManyToOne(() => Branch, (branch) => branch.users, { nullable: true })
+    branch?: Branch; // FK - 지점 ID
+
+    // 매니저(User)와 지점(Branch)의 관계 (1:N)
+    @OneToMany(() => Branch, (branch) => branch.manager)
+    managedBranches?: Branch[];
+
     @Column({ name: 'name', type: 'varchar', nullable: true })
     readonly name: string;
 
     @Column({ name: 'email', type: 'varchar', nullable: true })
     readonly email: string;
+
+    @Column({ name: 'level', type: 'varchar', nullable: true })
+    readonly level: string;
 
     @Column({
         name: 'phone_number',
@@ -40,7 +53,7 @@ export class User {
         name: 'registed_at',
     })
     // set now
-    readonly registedAt?: Date;
+    readonly registeredAt?: Date;
 
     @CreateDateColumn({
         type: 'datetime',

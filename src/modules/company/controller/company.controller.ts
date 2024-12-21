@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { CompanyService } from '../service/company.service';
 import { CreateCompanyDto } from '../dto/create-company.dto';
-import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { Company } from '../entity/company.entity';
 
 @Controller('companies')
@@ -29,7 +28,7 @@ export class CompanyController {
     @Patch(':id')
     update(
         @Param('id') id: number,
-        @Body() updateCompanyDto: UpdateCompanyDto,
+        @Body() updateCompanyDto: CreateCompanyDto,
     ) {
         return this.companyService.update(id, updateCompanyDto);
     }
@@ -66,5 +65,15 @@ export class CompanyController {
     @Get('manager-name/:name')
     async findByManagerName(@Param('name') name: string): Promise<Company> {
         return this.companyService.getCompanyByManagerName(name);
+    }
+
+    @Get('name/:name')
+    async getCompanyByName(@Param('name') name: string) {
+        return await this.companyService.getCompanyByName(name);
+    }
+
+    @Get('phone/:phone')
+    async getCompanyByPhone(@Param('phone') phoneNumber: string) {
+        return await this.companyService.getCompanyByPhoneNumber(phoneNumber);
     }
 }

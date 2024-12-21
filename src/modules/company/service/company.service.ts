@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompanyRepository } from '../repository/company.repository';
 import { CreateCompanyDto } from '../dto/create-company.dto';
-import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { Company } from '../entity/company.entity';
 
 @Injectable()
@@ -42,6 +41,15 @@ export class CompanyService {
             phoneNumber,
         );
     }
+    async getCompanyByName(name: string) {
+        return await this.companyRepository.findByNameOrFail(name);
+    }
+
+    async getCompanyByPhoneNumber(phoneNumber: string) {
+        return await this.companyRepository.findByPhoneNumberOrFail(
+            phoneNumber,
+        );
+    }
 
     /**
      * 관리자 이름으로 회사 조회
@@ -54,7 +62,7 @@ export class CompanyService {
 
     async update(
         id: number,
-        updateCompanyDto: UpdateCompanyDto,
+        updateCompanyDto: CreateCompanyDto,
     ): Promise<Company> {
         const company = await this.companyRepository.findByIdOrFail(id);
         Object.assign(company, updateCompanyDto);

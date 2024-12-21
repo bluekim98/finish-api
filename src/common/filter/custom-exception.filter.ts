@@ -14,15 +14,13 @@ export class CustomExceptionFilter implements ExceptionFilter {
         // 커스텀 예외 객체 처리
         switch (exception.code) {
             case ExceptionCode.COMPANY_NOT_FOUND:
+            case ExceptionCode.BRANCH_NOT_FOUND:
             case ExceptionCode.USER_NOT_FOUND:
                 response.status(HttpStatus.NOT_FOUND).json({
                     statusCode: HttpStatus.NOT_FOUND,
-                    message: _getErrorMessage(exception.code),
+                    message: exception.message,
                 });
                 break;
         }
     }
-}
-function _getErrorMessage(code: ExceptionCode): string {
-    return ExceptionCode[code] + ' : ' + code;
 }

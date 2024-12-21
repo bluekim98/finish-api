@@ -22,6 +22,7 @@ export class UserService {
         const user: User = {
             name: createUserDto.name,
             email: createUserDto.email,
+            level: createUserDto.level,
             device: device,
             phoneNumber: createUserDto.phoneNumber,
             password: encryptedPassword,
@@ -67,9 +68,12 @@ export class UserService {
         return {
             id: user.id!,
             name: user.name,
+            level: user.level,
             email: user.email,
             device: user.device,
+            provider: user.provider,
             phoneNumber: user.phoneNumber,
+            registeredAt: user.registeredAt!,
             createdAt: user.createdAt!,
             updatedAt: user.updatedAt!,
             kakaoId: user.kakaoId,
