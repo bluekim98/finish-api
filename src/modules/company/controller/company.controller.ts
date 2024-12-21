@@ -66,4 +66,14 @@ export class CompanyController {
     async findByManagerName(@Param('name') name: string): Promise<Company> {
         return this.companyService.getCompanyByManagerName(name);
     }
+
+    @Get('name/:name')
+    async getCompanyByName(@Param('name') name: string) {
+        return await this.companyService.getCompanyByName(name);
+    }
+
+    @Get('phone/:phone')
+    async getCompanyByPhone(@Param('phone') phoneNumber: string) {
+        return await this.companyService.getCompanyByPhoneNumber(phoneNumber);
+    }
 }

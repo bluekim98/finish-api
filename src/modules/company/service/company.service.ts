@@ -41,6 +41,15 @@ export class CompanyService {
             phoneNumber,
         );
     }
+    async getCompanyByName(name: string) {
+        return await this.companyRepository.findByNameOrFail(name);
+    }
+
+    async getCompanyByPhoneNumber(phoneNumber: string) {
+        return await this.companyRepository.findByPhoneNumberOrFail(
+            phoneNumber,
+        );
+    }
 
     /**
      * 관리자 이름으로 회사 조회

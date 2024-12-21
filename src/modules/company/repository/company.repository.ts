@@ -23,6 +23,7 @@ export class CompanyRepository extends Repository<Company> {
         if (!company) {
             throw {
                 code: ExceptionCode.COMPANY_NOT_FOUND,
+                message: `Company with ID "${id}" not found`,
             };
         }
         return company;
@@ -36,10 +37,13 @@ export class CompanyRepository extends Repository<Company> {
     async findByManagerPhoneNumberOrFail(
         managerPhoneNumber: string,
     ): Promise<Company> {
-        const company = await this.findOne({ where: { managerPhoneNumber } });
+        const company = await this.findOne({
+            where: { managerPhoneNumber },
+        });
         if (!company) {
             throw {
                 code: ExceptionCode.COMPANY_NOT_FOUND,
+                message: `Company with manager phone number "${managerPhoneNumber}" not found`,
             };
         }
         return company;
@@ -55,6 +59,38 @@ export class CompanyRepository extends Repository<Company> {
         if (!company) {
             throw {
                 code: ExceptionCode.COMPANY_NOT_FOUND,
+                message: `Company with manager name "${managerName}" not found`,
+            };
+        }
+        return company;
+    }
+    /**
+     * 회사 이름으로 회사 조회. 없을 경우 예외 발생.
+     * @param name 회사 이름
+     * @returns Company
+     */
+    async findByNameOrFail(name: string): Promise<Company> {
+        const company = await this.findOne({ where: { name } });
+        if (!company) {
+            throw {
+                code: ExceptionCode.COMPANY_NOT_FOUND,
+                message: `Company with name "${name}" not found`,
+            };
+        }
+        return company;
+    }
+
+    /**
+     * 회사 전화번호로 회사 조회. 없을 경우 예외 발생.
+     * @param phoneNumber 회사 전화번호
+     * @returns Company
+     */
+    async findByPhoneNumberOrFail(phoneNumber: string): Promise<Company> {
+        const company = await this.findOne({ where: { phoneNumber } });
+        if (!company) {
+            throw {
+                code: ExceptionCode.COMPANY_NOT_FOUND,
+                message: `Company with phone number "${phoneNumber}" not found`,
             };
         }
         return company;

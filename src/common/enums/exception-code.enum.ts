@@ -10,7 +10,8 @@ export enum ExceptionCode {
 
     // 찾기 실패
     COMPANY_NOT_FOUND = 101,
-    USER_NOT_FOUND = 101,
+    BRANCH_NOT_FOUND = 102,
+    USER_NOT_FOUND = 103,
 
     // 기타 예외
     INVALID_INPUT = 1001,
