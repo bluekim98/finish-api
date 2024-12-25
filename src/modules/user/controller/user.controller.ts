@@ -1,22 +1,16 @@
 import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { UserService } from '../service/user.service';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { UseKakaoAuthGuard } from '@src/auth/guard';
+import { UseKakaoAuthGuard, UseLocalAuthGuard } from '@src/auth/guard';
 import { RequestWithUser } from '@src/auth/controller/auth.controller';
-import { detectDevice } from '@src/common/utils/device-detector.util';
-import { Request } from 'express';
+import { FindUserDto } from '../dto/find-user.dto';
 
 @Controller('user')
 export class UserController {
     constructor(private readonly userService: UserService) {}
 
-    @Post()
-    async createUser(
-        @Req() req: Request,
-        @Body() createUserDto: CreateUserDto,
-    ) {
-        const device = detectDevice(req);
-        return await this.userService.create(createUserDto, device);
+    @Post('exists')
+    async existsUser(@Body() body: FindUserDto) {
+        return await this.userService.existsUser(body);
     }
 
     @UseKakaoAuthGuard()
@@ -25,6 +19,7 @@ export class UserController {
         return req.user;
     }
 
+    @UseLocalAuthGuard()
     @Get('me')
     async me(@Req() req: RequestWithUser) {
         return req.user;

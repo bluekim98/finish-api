@@ -28,6 +28,9 @@ export class AuthService {
     ): Promise<User | undefined> {
         const user = await this.userService.findOneBy({ phoneNumber });
         if (!user) return;
+        if (!user.password) {
+            return;
+        }
 
         const isCompare = await this.bcryptService.compare(
             password,
@@ -102,6 +105,9 @@ export class AuthService {
 
     async kakaoValidateUser(user: UserDto, device: string): Promise<UserDto> {
         try {
+            if (!user.email) {
+                throw new Error('Email is required');
+            }
             return await this.userService.findOneByEmail(user.email);
         } catch (error) {
             if (error.code === ExceptionCode.USER_NOT_FOUND) {

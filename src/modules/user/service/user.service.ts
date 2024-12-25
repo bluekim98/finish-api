@@ -35,6 +35,18 @@ export class UserService {
             .then((user) => this.toDto(user));
     }
 
+    async existsUser(condition: FindUserDto) {
+        const isEmtpy = Array.from(Object.keys(condition)).every(
+            (key) => !(condition as Record<string, any>)[key],
+        );
+        if (isEmtpy) return;
+
+        const user = await this.findOneBy(condition);
+        if (user) {
+            return this.toDto(user);
+        }
+    }
+
     async findOneBy(condition: FindUserDto) {
         return await this.userRepository.findOneBy(condition);
     }

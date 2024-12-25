@@ -18,7 +18,7 @@ async function bootstrap() {
         credentials: true,
         origin: '*',
     });
-    app.useGlobalFilters(new CustomExceptionFilter());
+    // app.useGlobalFilters(new CustomExceptionFilter());
     await app.listen(port);
     console.log(`Server is running on port:${port}`);
 }

@@ -26,26 +26,26 @@ export class User {
     managedBranches?: Branch[];
 
     @Column({ name: 'name', type: 'varchar', nullable: true })
-    readonly name: string;
+    readonly name?: string;
 
-    @Column({ name: 'email', type: 'varchar', nullable: true })
+    @Column({ name: 'email', type: 'varchar', unique: true })
     readonly email: string;
 
     @Column({ name: 'level', type: 'varchar', nullable: true })
-    readonly level: string;
+    readonly level?: string;
 
     @Column({
         name: 'phone_number',
         type: 'varchar',
         nullable: true,
     })
-    readonly phoneNumber: string;
+    readonly phoneNumber?: string;
 
     @Column({ name: 'password', type: 'varchar', nullable: true })
-    readonly password: string;
+    readonly password?: string;
 
     @Column({ name: 'device', type: 'varchar', nullable: true })
-    readonly device: string;
+    readonly device?: string;
 
     @CreateDateColumn({
         type: 'datetime',
@@ -72,7 +72,7 @@ export class User {
     readonly updatedAt?: Date;
 
     @Column({ name: 'kakao_id', type: 'bigint', nullable: true, unique: true })
-    readonly kakaoId: number;
+    readonly kakaoId?: number;
     @Column({ name: 'provider', type: 'varchar', nullable: true })
-    readonly provider: string;
+    readonly provider?: string;
 }

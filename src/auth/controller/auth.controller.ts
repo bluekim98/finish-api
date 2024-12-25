@@ -1,4 +1,4 @@
-import { Controller, Get, HttpCode, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 import {
     UseJwtRefreshAuthGuard,
@@ -8,6 +8,9 @@ import {
 import { AuthService } from '../service/auth.service';
 import { ConfigService } from '@nestjs/config';
 import { UserDto } from '@src/modules/user/dto/user.dto';
+import { UserService } from '@src/modules/user/service/user.service';
+import { detectDevice } from '@src/common/utils/device-detector.util';
+import { CreateUserDto } from '@src/modules/user/dto/create-user.dto';
 
 export interface RequestWithUser extends Request {
     user: UserDto;
@@ -17,8 +20,18 @@ export interface RequestWithUser extends Request {
 export class AuthController {
     constructor(
         private readonly authService: AuthService,
+        private readonly userService: UserService,
         private readonly configService: ConfigService,
     ) {}
+
+    @Post('sign-up')
+    async signUp(@Req() req: Request, @Body() createUserDto: CreateUserDto) {
+        const device = detectDevice(req);
+        const user = await this.userService.create(createUserDto, device);
+        const tokenCookies = this.authService.generateTokenCookies(user);
+        req.res!.setHeader('Set-Cookie', [...tokenCookies]);
+        return user;
+    }
 
     @UseLocalAuthGuard()
     @Post('sign-in')
