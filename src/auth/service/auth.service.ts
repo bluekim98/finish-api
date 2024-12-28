@@ -23,10 +23,10 @@ export class AuthService {
     ) {}
 
     async validateUser(
-        phoneNumber: string,
+        email: string,
         password: string,
     ): Promise<User | undefined> {
-        const user = await this.userService.findOneBy({ phoneNumber });
+        const user = await this.userService.findOneBy({ email });
         if (!user) return;
         if (!user.password) {
             return;
